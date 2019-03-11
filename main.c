@@ -20,7 +20,7 @@ int playing;
 // Frame que será mostrado
 GObject *frame;
 GObject *event_box;
-GtkImage *add
+GtkImage *add_img;
 
 char pic_filename[5000];
 const char *frames_dir="/home/arthur/.config/unity3d/LAViD/VLibrasVideoMaker/t_beta_01/";
