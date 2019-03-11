@@ -1,4 +1,5 @@
 *.o
 *.so
 *.a
+*~
 teste2_ui
