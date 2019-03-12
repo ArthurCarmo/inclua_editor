@@ -24,8 +24,8 @@ GObject *event_box;
 GObject *new_image;
 
 char pic_filename[5000];
-char new_image_path[5000] = "/home/arthur/Documentos/inclua_editor/teste_img_2.jpg";
-const char *frames_dir="/home/arthur/.config/unity3d/LAViD/VLibrasVideoMaker/t_beta_01/";
+char new_image_path[5000] = "teste_img_2.jpeg";
+const char *frames_dir="demo_screenshots/";
 int curr_frame = 0;
 int last_frame;
 
@@ -148,6 +148,7 @@ void set_4by3_ratio() {
 	
 }
 
+
 void center_image() {
 
 	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(event_box), (canvas_winW - frame_winW) / 2, (canvas_winH - frame_winH) / 2);
@@ -159,31 +160,13 @@ static void set_fixed_children_dim(GtkWidget *widget, GdkRectangle *allocate, gp
 	canvas_winW = allocate->width;
 	canvas_winH = allocate->height;
 
-	frame_winW = allocate->width * frameW_margin;
-	frame_winH = allocate->height * frameH_margin;
+	frame_winW = (gdouble) allocate->width * frameW_margin;
+	frame_winH = (gdouble) allocate->height * frameH_margin;
 	
 	set_4by3_ratio();
 	center_image();
 	update_frame(); 
 	
-}
-
-static void frame_clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-	
-	gdouble x_coord, y_coord;
-
-	x_coord = event->x;
-	y_coord = event->y;
-
-	new_image_relative_position_x = x_coord / frame_winW;
-	new_image_relative_position_y = y_coord / frame_winH;
-
-	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(new_image), x_coord + (gdouble) (canvas_winW - frame_winW) / 2, y_coord - (gdouble) (canvas_winH - frame_winH) / 2);
-	gtk_widget_set_visible(GTK_WIDGET(new_image), !gtk_widget_is_visible(GTK_WIDGET(new_image)));
-
-	g_print("(%lf, %lf)\n", x_coord, y_coord);
-
-
 }
 
 static GdkPixbuf * set_new_image_dims(GdkPixbuf *pixbuf) {
@@ -203,9 +186,7 @@ static GdkPixbuf * set_new_image_dims(GdkPixbuf *pixbuf) {
 		newH = oldH;
 
 	} else { 
-
-		printf("%lf\n", ratio);
-
+	
 		if(ratio < 1) { 
 
 			newH = frame_winH / 4;
@@ -226,19 +207,11 @@ static GdkPixbuf * set_new_image_dims(GdkPixbuf *pixbuf) {
 	return GDK_PIXBUF(gdk_pixbuf_scale_simple(pixbuf, newW, newH, GDK_INTERP_BILINEAR));
 }
 
-static void set_new_image(GtkFileChooserButton *chooser_button, gpointer user_data) {
-
+static void load_new_image() {
+	
 	GError *error = NULL;
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *new_pixbuf;
-
-	int len;
-	int i;
-
-	strcpy(new_image_path, gtk_file_chooser_get_uri (GTK_FILE_CHOOSER(chooser_button)));
-	len = strlen(new_image_path);	
-
-	for(i = 7; i <= len; i++) new_image_path[i-7] = new_image_path[i];
 	
 	pixbuf = gdk_pixbuf_new_from_file(new_image_path, &error);
 
@@ -253,6 +226,43 @@ static void set_new_image(GtkFileChooserButton *chooser_button, gpointer user_da
 	
 	gtk_image_set_from_pixbuf(GTK_IMAGE(new_image), new_pixbuf);	
 	
+}
+
+static void set_new_image(GtkFileChooserButton *chooser_button, gpointer user_data) {
+
+	int len;
+	int i;
+
+	strcpy(new_image_path, gtk_file_chooser_get_uri (GTK_FILE_CHOOSER(chooser_button)));
+	len = strlen(new_image_path);	
+
+	for(i = 7; i <= len; i++) new_image_path[i-7] = new_image_path[i];
+	
+	load_new_image();
+}
+
+
+static void window_resize_correct(GtkWidget *window, gpointer user_data) {
+	center_image();
+}
+
+static void frame_clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+	
+	gdouble x_coord, y_coord;
+
+	x_coord = event->x;
+	y_coord = event->y;
+
+	new_image_relative_position_x = x_coord / frame_winW;
+	new_image_relative_position_y = y_coord / frame_winH;
+
+	load_new_image();
+
+	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(new_image), x_coord + (gdouble) (canvas_winW - frame_winW) / 2, y_coord - (gdouble) (canvas_winH - frame_winH) / 2);
+	gtk_widget_set_visible(GTK_WIDGET(new_image), !gtk_widget_is_visible(GTK_WIDGET(new_image)));
+
+	g_print("click: (%lf, %lf)\n", x_coord, y_coord);
+
 }
 
 
@@ -282,6 +292,7 @@ int main (int argc, char *argv[]) {
 	// Winwdow
 	window = gtk_builder_get_object(builder, "main_window");
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(window, "check_resize", G_CALLBACK(window_resize_correct), NULL);
 		
 	
 	// Buttons
