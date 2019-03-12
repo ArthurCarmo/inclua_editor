@@ -24,7 +24,7 @@ GObject *event_box;
 GObject *new_image;
 
 char pic_filename[5000];
-char new_image_path[5000] = "teste_img_2.jpeg";
+char new_image_path[5000] = "test_img_2.jpeg";
 const char *frames_dir="demo_screenshots/";
 int curr_frame = 0;
 int last_frame;
@@ -164,7 +164,6 @@ static void set_fixed_children_dim(GtkWidget *widget, GdkRectangle *allocate, gp
 	frame_winH = (gdouble) allocate->height * frameH_margin;
 	
 	set_4by3_ratio();
-	center_image();
 	update_frame(); 
 	
 }
@@ -249,18 +248,21 @@ static void window_resize_correct(GtkWidget *window, gpointer user_data) {
 static void frame_clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
 	
 	gdouble x_coord, y_coord;
-
+	
 	x_coord = event->x;
 	y_coord = event->y;
-
+	
 	new_image_relative_position_x = x_coord / frame_winW;
 	new_image_relative_position_y = y_coord / frame_winH;
 
 	load_new_image();
 
-	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(new_image), x_coord + (gdouble) (canvas_winW - frame_winW) / 2, y_coord - (gdouble) (canvas_winH - frame_winH) / 2);
 	gtk_widget_set_visible(GTK_WIDGET(new_image), !gtk_widget_is_visible(GTK_WIDGET(new_image)));
-
+	
+	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(new_image), 
+			x_coord + ( canvas_winW - frame_winW ) / 2,
+			y_coord - ( canvas_winH - frame_winH ) / 2 );	
+	
 	g_print("click: (%lf, %lf)\n", x_coord, y_coord);
 
 }
