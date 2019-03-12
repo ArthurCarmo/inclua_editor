@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <gtk/gtk.h>
@@ -20,10 +21,10 @@ int playing;
 // Frame que será mostrado
 GObject *frame;
 GObject *event_box;
-GObject *added_img;
+GObject *new_image;
 
 char pic_filename[5000];
-char added_img_path[5000] = "/home/arthur/Documentos/inclua_editor/teste_img_2.jpg";
+char new_image_path[5000] = "/home/arthur/Documentos/inclua_editor/teste_img_2.jpg";
 const char *frames_dir="/home/arthur/.config/unity3d/LAViD/VLibrasVideoMaker/t_beta_01/";
 int curr_frame = 0;
 int last_frame;
@@ -31,12 +32,14 @@ int last_frame;
 #define ORIGINAL_PNG_WIDTH  800
 #define ORIGINAL_PNG_HEIGHT 600
 
-gint frame_winW  = 800 * 2 / 3 * 0.95;
-gint frame_winH  = 600 / 2     * 0.95;
-gint canvas_winW = 800 * 2 / 3;
-gint canvas_winH = 600 / 2;
-gint added_imgW = 0;
-gint added_imgH = 0;
+gint frame_winW  = ORIGINAL_PNG_WIDTH * 2 / 3 * 0.95;
+gint frame_winH  = ORIGINAL_PNG_HEIGHT / 2     * 0.95;
+gint canvas_winW = ORIGINAL_PNG_WIDTH * 2 / 3;
+gint canvas_winH = ORIGINAL_PNG_HEIGHT / 2;
+gint new_imageW = 0;
+gint new_imageH = 0;
+gdouble new_image_relative_position_x = 0;
+gdouble new_image_relative_position_y = 0;
 
 gdouble frameW_margin = 0.95;
 gdouble frameH_margin = 0.95;
@@ -172,34 +175,27 @@ static void frame_clicked(GtkWidget *widget, GdkEventButton *event, gpointer use
 	x_coord = event->x;
 	y_coord = event->y;
 
-	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(added_img), (canvas_winW - frame_winW + added_imgW) / 2, y_coord);
-	gtk_widget_set_visible(GTK_WIDGET(added_img), !gtk_widget_is_visible(GTK_WIDGET(added_img))); 	
-	
+	new_image_relative_position_x = x_coord / frame_winW;
+	new_image_relative_position_y = y_coord / frame_winH;
+
+	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(new_image), x_coord + (gdouble) (canvas_winW - frame_winW) / 2, y_coord - (gdouble) (canvas_winH - frame_winH) / 2);
+	gtk_widget_set_visible(GTK_WIDGET(new_image), !gtk_widget_is_visible(GTK_WIDGET(new_image)));
+
 	g_print("(%lf, %lf)\n", x_coord, y_coord);
+
 
 }
 
-static void set_added_img(GtkFileChooserButton *chooser_button, gpointer user_data) {
-
-	GError *error = NULL;
-	GdkPixbuf *pixbuf;
-	GdkPixbuf *new_pixbuf;
+static GdkPixbuf * set_new_image_dims(GdkPixbuf *pixbuf) {
 	
 	gint oldW, oldH;
 	gint newW, newH;
 	gdouble ratio;
-
-	pixbuf = gdk_pixbuf_new_from_file(gtk_file_chooser_button_get_title(chooser_button), &error);
-	if(pixbuf == NULL) {
-		g_printerr("%s\n", error->message);
-		g_clear_error( &error );
-		exit(EXIT_FAILURE);
-	}
 	
 	oldW = gdk_pixbuf_get_width(pixbuf);
 	oldH = gdk_pixbuf_get_height(pixbuf);
 	
-	ratio = oldW / oldH;
+	ratio = (double) oldW / oldH;
 	
 	if(oldW <= frame_winW / 4 && oldH <= frame_winH / 4) {
 
@@ -208,25 +204,54 @@ static void set_added_img(GtkFileChooserButton *chooser_button, gpointer user_da
 
 	} else { 
 
+		printf("%lf\n", ratio);
+
 		if(ratio < 1) { 
 
-			newW = frame_winW / 4;
-			newH = newW * ratio;
+			newH = frame_winH / 4;
+			newW = newH * ratio;
 
 		} else {
 
-			newH = frame_winH / 4;
-			newW = oldW / ratio;
+			newW = frame_winW / 4;
+			newH = newW / ratio;
 
 		}
 
 	}
 	
-	added_imgW = newW;
-	added_imgH = newH;
+	new_imageW = newW;
+	new_imageH = newH;
 	
-	new_pixbuf = gdk_pixbuf_scale_simple(pixbuf, newW, newH, GDK_INTERP_BILINEAR);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(added_img), new_pixbuf);	
+	return GDK_PIXBUF(gdk_pixbuf_scale_simple(pixbuf, newW, newH, GDK_INTERP_BILINEAR));
+}
+
+static void set_new_image(GtkFileChooserButton *chooser_button, gpointer user_data) {
+
+	GError *error = NULL;
+	GdkPixbuf *pixbuf;
+	GdkPixbuf *new_pixbuf;
+
+	int len;
+	int i;
+
+	strcpy(new_image_path, gtk_file_chooser_get_uri (GTK_FILE_CHOOSER(chooser_button)));
+	len = strlen(new_image_path);	
+
+	for(i = 7; i <= len; i++) new_image_path[i-7] = new_image_path[i];
+	
+	pixbuf = gdk_pixbuf_new_from_file(new_image_path, &error);
+
+	if(pixbuf == NULL) {
+		g_printerr("%s\n", error->message);
+		g_clear_error( &error );
+		exit(EXIT_FAILURE);
+	}
+
+
+	new_pixbuf = set_new_image_dims(pixbuf);
+	
+	gtk_image_set_from_pixbuf(GTK_IMAGE(new_image), new_pixbuf);	
 	
 }
 
@@ -286,7 +311,7 @@ int main (int argc, char *argv[]) {
 
 	// File chooser box
 	file_chooser_box = gtk_builder_get_object(builder, "file_chooser_box");
-	g_signal_connect(file_chooser_box, "file_set", G_CALLBACK(set_added_img), NULL);
+	g_signal_connect(file_chooser_box, "file_set", G_CALLBACK(set_new_image), NULL);
 	
 	
 	// Fixed
@@ -308,7 +333,7 @@ int main (int argc, char *argv[]) {
 	
 	
 	// Imagem a adicionar
-	added_img = gtk_builder_get_object(builder, "added_img");
+	new_image = gtk_builder_get_object(builder, "new_image");
 
 	center_image();
 	set_4by3_ratio();
