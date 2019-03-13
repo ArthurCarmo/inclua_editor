@@ -133,10 +133,6 @@
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="x">50</property>
-                <property name="y">50</property>
-              </packing>
             </child>
             <child>
               <object class="GtkImage" id="new_image">

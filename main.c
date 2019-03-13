@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include <gtk/gtk.h>
 
@@ -242,7 +241,9 @@ static void set_new_image(GtkFileChooserButton *chooser_button, gpointer user_da
 
 
 static void window_resize_correct(GtkWidget *window, gpointer user_data) {
+
 	center_image();
+
 }
 
 static void frame_clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
@@ -259,9 +260,9 @@ static void frame_clicked(GtkWidget *widget, GdkEventButton *event, gpointer use
 
 	gtk_widget_set_visible(GTK_WIDGET(new_image), !gtk_widget_is_visible(GTK_WIDGET(new_image)));
 	
-	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(new_image), 
-			x_coord + (gdouble) ( canvas_winW - frame_winW ) / 2,
-			y_coord - (gdouble) ( canvas_winH - frame_winH ) / 2 );	
+	gtk_fixed_move( GTK_FIXED(fixed), GTK_WIDGET(new_image), 
+			x_coord + ( canvas_winW - frame_winW ) / 2,
+			y_coord + ( canvas_winH - frame_winH ) / 2 );	
 	
 	g_print("click: (%lf, %lf)\n", x_coord, y_coord);
 
