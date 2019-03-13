@@ -31,17 +31,25 @@ int last_frame;
 #define ORIGINAL_PNG_WIDTH  800
 #define ORIGINAL_PNG_HEIGHT 600
 
-gint frame_winW  = ORIGINAL_PNG_WIDTH * 2 / 3 * 0.95;
-gint frame_winH  = ORIGINAL_PNG_HEIGHT / 2     * 0.95;
-gint canvas_winW = ORIGINAL_PNG_WIDTH * 2 / 3;
-gint canvas_winH = ORIGINAL_PNG_HEIGHT / 2;
+#define CANVAS_WIDTH_RATIO	(2 / 3)
+#define CANVAS_HEIGHT_RATIO	(1 / 2)
+
+#define FRAME_WIDTH_MARGIN_RATIO  0.95
+#define FRAME_HEIGHT_MARGIN_RATIO 0.95
+
+gint frame_winW  = ORIGINAL_PNG_WIDTH  * CANVAS_WIDTH_RATIO  * FRAME_WIDTH_MARGIN_RATIO;
+gint frame_winH  = ORIGINAL_PNG_HEIGHT * CANVAS_HEIGHT_RATIO * FRAME_HEIGHT_MARGIN_RATIO;
+gint canvas_winW = ORIGINAL_PNG_WIDTH  * CANVAS_WIDTH_RATIO;
+gint canvas_winH = ORIGINAL_PNG_HEIGHT * CANVAS_HEIGHT_RATIO;
+
+gdouble frameW_margin = FRAME_WIDTH_MARGIN_RATIO;
+gdouble frameH_margin = FRAME_HEIGHT_MARGIN_RATIO;
+
 gint new_imageW = 0;
 gint new_imageH = 0;
+
 gdouble new_image_relative_position_x = 0;
 gdouble new_image_relative_position_y = 0;
-
-gdouble frameW_margin = 0.95;
-gdouble frameH_margin = 0.95;
 
 static void update_progress_label() {
 
