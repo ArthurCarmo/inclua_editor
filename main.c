@@ -31,11 +31,14 @@ int last_frame;
 #define ORIGINAL_PNG_WIDTH  800
 #define ORIGINAL_PNG_HEIGHT 600
 
-#define CANVAS_WIDTH_RATIO	(2 / 3)
-#define CANVAS_HEIGHT_RATIO	(1 / 2)
+#define CANVAS_WIDTH_RATIO	(2.0 / 3)
+#define CANVAS_HEIGHT_RATIO	(1.0 / 2)
 
 #define FRAME_WIDTH_MARGIN_RATIO  0.95
 #define FRAME_HEIGHT_MARGIN_RATIO 0.95
+
+#define NEW_IMAGE_WIDTH_RATIO  (1.0 / 4)
+#define NEW_IMAGE_HEIGHT_RATIO (1.0 / 4)
 
 gint frame_winW  = ORIGINAL_PNG_WIDTH  * CANVAS_WIDTH_RATIO  * FRAME_WIDTH_MARGIN_RATIO;
 gint frame_winH  = ORIGINAL_PNG_HEIGHT * CANVAS_HEIGHT_RATIO * FRAME_HEIGHT_MARGIN_RATIO;
@@ -179,14 +182,18 @@ static GdkPixbuf * set_new_image_dims(GdkPixbuf *pixbuf) {
 	
 	gint oldW, oldH;
 	gint newW, newH;
+	
 	gdouble ratio;
+	
+	gdouble target_new_image_width  = frame_winW * NEW_IMAGE_WIDTH_RATIO;
+	gdouble target_new_image_height = frame_winH * NEW_IMAGE_HEIGHT_RATIO;
 	
 	oldW = gdk_pixbuf_get_width(pixbuf);
 	oldH = gdk_pixbuf_get_height(pixbuf);
 	
 	ratio = (double) oldW / oldH;
 	
-	if(oldW <= frame_winW / 4 && oldH <= frame_winH / 4) {
+	if(oldW <= target_new_image_width && oldH <= target_new_image_height) {
 
 		newW = oldW;
 		newH = oldH;
@@ -195,12 +202,12 @@ static GdkPixbuf * set_new_image_dims(GdkPixbuf *pixbuf) {
 	
 		if(ratio < 1) { 
 
-			newH = frame_winH / 4;
+			newH = target_new_image_height;
 			newW = newH * ratio;
 
 		} else {
 
-			newW = frame_winW / 4;
+			newW = target_new_image_width;
 			newH = newW / ratio;
 
 		}
