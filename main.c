@@ -147,15 +147,22 @@ void set_4by3_ratio() {
 	gint w, h;
 	
 	if(frame_winW < frame_winH) {
+
 		h = 3 * frame_winW / 4;
 		w = frame_winW;
+
 	} else {
+
 		h = frame_winH;
 		w = 4 * frame_winH / 3;
+
 		if(w > frame_winW) {
+
 			h = 3 * frame_winW / 4;
 			w = frame_winW;
+
 		}
+
 	}
 
 	frame_winW = w;
