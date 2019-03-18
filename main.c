@@ -179,10 +179,12 @@ void center_image() {
 
 static void set_fixed_children_dim(GtkWidget *widget, GdkRectangle *allocate, gpointer user_data) { 
 
+	// Espaço alocado para o GtkFixed (canvas)
 	canvas_winW = allocate->width;
 	canvas_winH = allocate->height;
 
-	frame_winW = (gdouble) allocate->width * frameW_margin;
+	// O espaço disponivel para a imagem é uma porcentagem do canvas
+	frame_winW = (gdouble) allocate->width  * frameW_margin;
 	frame_winH = (gdouble) allocate->height * frameH_margin;
 	
 	set_4by3_ratio();
@@ -264,6 +266,7 @@ static void set_new_image(GtkFileChooserButton *chooser_button, gpointer user_da
 	strcpy(new_image_path, gtk_file_chooser_get_uri (GTK_FILE_CHOOSER(chooser_button)));
 	len = strlen(new_image_path);	
 
+	// Remove o prefixo (file://) do nome do arquivo
 	for(i = 7; i <= len; i++) new_image_path[i-7] = new_image_path[i];
 	
 	load_new_image();
