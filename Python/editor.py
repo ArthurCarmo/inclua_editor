@@ -14,6 +14,8 @@ curr_frame = 0
 last_frame = fc.frame_counter(frames_dir)
 progress_label_width = 2 * fc.ndigits(last_frame) + 2;
 
+print (last_frame)
+
 # Objeto que recupera os widgets do arquivo xml
 builder = Gtk.Builder()	
 try:
@@ -24,7 +26,7 @@ except:
 
 # Window callbacks
 def window_resize_correction(window):
-	
+	print("%dx%d" % (window.get_size()))
 # Picture callbacks
 
 # Player callbacks
