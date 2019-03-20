@@ -25,8 +25,8 @@ GObject *event_box;
 GObject *new_image;
 
 char pic_filename[5000];
-char new_image_path[5000] = "test_img_2.jpeg";
-const char *frames_dir="demo_screenshots/";
+char new_image_path[5000] = "../img/test_img_2.jpeg";
+const char *frames_dir="../img/demo_screenshots/";
 
 #define ORIGINAL_PNG_WIDTH  800
 #define ORIGINAL_PNG_HEIGHT 600
@@ -318,7 +318,7 @@ int main (int argc, char *argv[]) {
 	
 	builder = gtk_builder_new();
 	
-	if(gtk_builder_add_from_file(builder, "ui_file2.ui", &error) == 0) {
+	if(gtk_builder_add_from_file(builder, "../ui_file2.ui", &error) == 0) {
 		g_printerr("%s\n", error->message);
 		g_clear_error( &error );
 		return 1;
