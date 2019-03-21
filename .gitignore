@@ -2,4 +2,5 @@
 *.so
 *.a
 *~
+*.pyc
 teste2_ui
