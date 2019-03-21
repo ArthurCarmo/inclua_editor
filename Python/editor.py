@@ -7,6 +7,8 @@ from gi.repository import Gtk
 import sys
 import file_counter as fc
 
+import Player
+import Image as Img
 
 frames_dir = "../img/demo_screenshots/"
 
@@ -25,15 +27,21 @@ except:
 	sys.exit()
 
 # Window callbacks
-def window_resize_correction(window):
-	print("%dx%d" % (window.get_size()))
+	
 # Picture callbacks
 
 # Player callbacks
 
-main_window = builder.get_object("main_window")
-main_window.connect("destroy", Gtk.main_quit)
-main_window.connect("check_resize", window_resize_correction)
+
+
+
+player = Player.FramePlayer(builder.get_object("fixed_image_grid"), builder.get_object("player_frame"), builder.get_object("player_scrollbar"), builder.get_object("player_progress_label"), frames_dir, 400, 300)
+
+builder.get_object("main_window").connect("destroy", Gtk.main_quit)
+builder.get_object("quit").connect("clicked", Gtk.main_quit)
+builder.get_object("play").connect("clicked", player.toggle)
+# builder.get_object("frame_event_box").connect("button_press_event", player.add_image)
+# builder.get_object("file_chooser_box").connect("file_set", new_image_select)
 
 Gtk.main()
 sys.exit()

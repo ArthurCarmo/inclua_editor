@@ -173,6 +173,7 @@ void set_4by3_ratio() {
 
 void center_image() {
 
+	g_print("%dx%d -> %dx%d\n", canvas_winW, canvas_winH, frame_winW, frame_winH);
 	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(event_box), (canvas_winW - frame_winW) / 2, (canvas_winH - frame_winH) / 2);
 
 }
