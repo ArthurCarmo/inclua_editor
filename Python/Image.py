@@ -57,3 +57,16 @@ class Image() :
 	def update(frame, width, height) :
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frame)
 		self.resize(width, height)
+		
+	def set_image(image) :
+		w = self.width
+		h = self.height
+		self.pixbuf = image.get_pixbuf()
+		self.scale_fit_limits(w, h)
+	
+	def get_pixbuf() :
+		return self.pixbuf
+		
+	def get_size() :
+		return self.pixbuf.get_width(), self.pixbuf.get_height()
+		
