@@ -16,8 +16,6 @@ curr_frame = 0
 last_frame = fc.frame_counter(frames_dir)
 progress_label_width = 2 * fc.ndigits(last_frame) + 2;
 
-print (last_frame)
-
 # Objeto que recupera os widgets do arquivo xml
 builder = Gtk.Builder()	
 try:
@@ -25,14 +23,6 @@ try:
 except:			
 	print("File not found")
 	sys.exit()
-
-# Window callbacks
-	
-# Picture callbacks
-
-# Player callbacks
-
-
 
 
 player = Player.FramePlayer(builder.get_object("fixed_image_grid"), builder.get_object("player_frame"), builder.get_object("player_scrollbar"), builder.get_object("player_progress_label"), frames_dir, 400, 300)
