@@ -7,10 +7,16 @@ from gi.repository import GdkPixbuf
 
 class Image() :
 	
-	def __init__(self, frameFile, width, height) :
+	def __init__(self, frameFile, width = None, height = None) :
 		self.frameObject = 1
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
-		self.scale_fit_limits(width, height)
+		
+		if height is None:
+			if width is not None:
+				self.scale_by_width(width)
+		else:
+			self.scale_fit_limits(width, height)
+			
 		
 	
 	def resize(self, width, height) :
@@ -78,4 +84,11 @@ class Image() :
 		
 	def get_size(self) :
 		return self.pixbuf.get_width(), self.pixbuf.get_height()
+		
+		
+class AppendImage(Image) : 
+	
+	def __init__ (self, frameFile, x_position = 0, y_position = 0, target_width = None, target_height = None) :
+	
+		Image.__init__(self, frameFile, target_width, target_height)
 

@@ -24,14 +24,25 @@ except:
 	print("File not found")
 	sys.exit()
 
+def new_image_select(chooser_button, new_image_file) :
+	new_image_file = chooser_button.get_uri()
+	new_image_file = new_image_file[7:]
+	print (new_image_file)
+
+def display_image_merger (widget, event, player, new_image) :
+	print ("(%d, %d)" % (event.x, event.y))
+	
+
+
 
 player = Player.FramePlayer(builder.get_object("fixed_image_grid"), builder.get_object("player_frame"), builder.get_object("player_scrollbar"), builder.get_object("player_progress_label"), frames_dir, 400, 300)
+new_image = None
 
 builder.get_object("main_window").connect("destroy", Gtk.main_quit)
 builder.get_object("quit").connect("clicked", Gtk.main_quit)
 builder.get_object("play").connect("clicked", player.toggle)
-# builder.get_object("frame_event_box").connect("button_press_event", player.add_image)
-# builder.get_object("file_chooser_box").connect("file_set", new_image_select)
+builder.get_object("frame_event_box").connect("button_press_event", display_image_merger, player, new_image)
+builder.get_object("file_chooser_box").connect("file_set", new_image_select, new_image)
 
 Gtk.main()
 sys.exit()

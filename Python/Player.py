@@ -87,8 +87,11 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 class FramePlayer(PlayerHandler): 
+
 	def __init__ (self, canvasFixed, frameWidget, scrollbar, progress_label, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
+	
 		PlayerHandler.__init__(self, framesDir, width, height, width_margin_ratio, height_margin_ratio )
+		
 		self.canvasFixed	= canvasFixed		
 		self.frameWidget	= frameWidget
 		self.scrollbar 		= scrollbar
@@ -100,6 +103,7 @@ class FramePlayer(PlayerHandler):
 		allocation = canvasFixed.get_allocation()
 		self.width  = allocation.width
 		self.height = allocation.height
+		
 		self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
 		
 		self.progress_label.set_width_chars(self.progress_label_width)
@@ -114,6 +118,7 @@ class FramePlayer(PlayerHandler):
 		
 	
 	def center_frame(self) :
+	
 		c = self.canvasFixed.get_allocation()
 		f_width = self.frameWidget.get_pixbuf().get_width()
 		f_height = self.frameWidget.get_pixbuf().get_height()
@@ -122,6 +127,7 @@ class FramePlayer(PlayerHandler):
 		
 		
 	def resize_and_center(self, widget, allocation) :
+	
 		self.width  = allocation.width
 		self.height = allocation.height
 		
