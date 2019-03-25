@@ -36,6 +36,7 @@ def display_image_merger (widget, event, player, new_image) :
 
 
 player = Player.FramePlayer(builder.get_object("fixed_image_grid"), builder.get_object("player_frame"), builder.get_object("player_scrollbar"), builder.get_object("player_progress_label"), frames_dir, 400, 300)
+# merger = Player.FramePlayer(builder.get_object("fixed_image_grid_merger"), builder.get_object("player_frame_merger"), builder.get_object("player_scrollbar_merger"), builder.get_object("player_progress_label_merger"), frames_dir, 400, 300)
 new_image = None
 
 builder.get_object("main_window").connect("destroy", Gtk.main_quit)

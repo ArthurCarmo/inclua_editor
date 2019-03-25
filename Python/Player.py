@@ -109,6 +109,7 @@ class FramePlayer(PlayerHandler):
 		self.progress_label.set_width_chars(self.progress_label_width)
 		self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
 		self.scrollbar.set_range (0, self.last_frame)
+		self.scrollbar.set_value(50);
 		
 		self.center_frame()
 	
