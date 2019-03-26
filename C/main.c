@@ -8,7 +8,7 @@ extern int count_files(const char *);
 extern int ndigits(int);
 
 // Controle do player
-GObject *scrollbar; 
+GObject *progress_bar; 
 GObject *progress_label;
 GObject *fixed;
 
@@ -122,7 +122,7 @@ static gboolean handle_player( ) {
 	}
 	
 	playing = next_frame();
-	gtk_range_set_value(GTK_RANGE(scrollbar), curr_frame);
+	gtk_range_set_value(GTK_RANGE(progress_bar), curr_frame);
 	
 	return playing?TRUE:FALSE;
 	
@@ -332,19 +332,19 @@ int main (int argc, char *argv[]) {
 		
 	
 	// Buttons
-	button = gtk_builder_get_object(builder, "play");
+	button = gtk_builder_get_object(builder, "main_play_button");
 	g_signal_connect(button, "clicked", G_CALLBACK(play_function), NULL);
 	
 	
-	button = gtk_builder_get_object(builder, "quit");
+	button = gtk_builder_get_object(builder, "main_quit_button");
 	g_signal_connect(button, "clicked", G_CALLBACK(gtk_main_quit), NULL);
 
 
-	// Scroll bar
-	scrollbar = gtk_builder_get_object(builder, "player_scrollbar");
-	g_signal_connect(scrollbar, "value_changed", G_CALLBACK(move_to_frame), NULL);
+	// Progress bar
+	progress_bar = gtk_builder_get_object(builder, "player_progress_bar");
+	g_signal_connect(progress_bar, "value_changed", G_CALLBACK(move_to_frame), NULL);
 		
-	gtk_range_set_range(GTK_RANGE(scrollbar), 0.0, (gdouble) last_frame);
+	gtk_range_set_range(GTK_RANGE(progress_bar), 0.0, (gdouble) last_frame);
 	
 
 	// Progress label
@@ -355,12 +355,12 @@ int main (int argc, char *argv[]) {
 	
 
 	// File chooser box
-	file_chooser_box = gtk_builder_get_object(builder, "file_chooser_box");
+	file_chooser_box = gtk_builder_get_object(builder, "main_file_chooser_box");
 	g_signal_connect(file_chooser_box, "file_set", G_CALLBACK(set_new_image), NULL);
 	
 	
 	// Fixed
-	fixed = gtk_builder_get_object(builder, "fixed_image_grid");
+	fixed = gtk_builder_get_object(builder, "player_fixed_image_grid");
 	g_signal_connect(fixed, "size_allocate", G_CALLBACK(set_fixed_children_dim), NULL);
 	
 	
@@ -368,7 +368,7 @@ int main (int argc, char *argv[]) {
 	frame_winW = 400;
 	frame_winH = 300;
 	
-	event_box = gtk_builder_get_object(builder, "frame_event_box");
+	event_box = gtk_builder_get_object(builder, "player_frame_event_box");
 	g_signal_connect(event_box, "button_press_event", G_CALLBACK(frame_clicked), NULL);
 	
 	
@@ -378,7 +378,7 @@ int main (int argc, char *argv[]) {
 	
 	
 	// Imagem a adicionar
-	new_image = gtk_builder_get_object(builder, "new_image");
+	new_image = gtk_builder_get_object(builder, "player_new_image");
 
 	center_image();
 	set_4by3_ratio();

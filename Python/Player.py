@@ -88,17 +88,17 @@ from gi.repository import Gtk
 
 class FramePlayer(PlayerHandler): 
 
-	def __init__ (self, canvasFixed, frameWidget, scrollbar, progress_label, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
+	def __init__ (self, canvasFixed, frameWidget, progress_bar, progress_label, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
 	
 		PlayerHandler.__init__(self, framesDir, width, height, width_margin_ratio, height_margin_ratio )
 		
 		self.canvasFixed	= canvasFixed		
 		self.frameWidget	= frameWidget
-		self.scrollbar 		= scrollbar
+		self.progress_bar 	= progress_bar
 		self.progress_label	= progress_label
 		
 		self.canvasFixed.connect("size_allocate", self.resize_and_center)
-		self.scrollbar.connect("value_changed", self.get_new_frame)
+		self.progress_bar.connect("value_changed", self.get_new_frame)
 		
 		allocation = canvasFixed.get_allocation()
 		self.width  = allocation.width
@@ -108,8 +108,7 @@ class FramePlayer(PlayerHandler):
 		
 		self.progress_label.set_width_chars(self.progress_label_width)
 		self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
-		self.scrollbar.set_range (0, self.last_frame)
-		self.scrollbar.set_value(50);
+		self.progress_bar.set_range (0, self.last_frame)
 		
 		self.center_frame()
 	
@@ -140,7 +139,7 @@ class FramePlayer(PlayerHandler):
 	def refresh(self) :
 	
 		self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
-		self.scrollbar.set_value(self.curr_frame)
+		self.progress_bar.set_value(self.curr_frame)
 		self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
 		
 		
