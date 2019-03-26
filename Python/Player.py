@@ -29,7 +29,14 @@ class PlayerHandler () :
 		self.layered_images = [ ] # Lista que associam imagens a intervalos
 		
 				
-	def toggle(self, widget = None) : 
+	def toggle(self, button = None) : 
+	
+		if button is not None :
+			if button.get_label() == "Play!" :
+				button.set_label("Pause!")
+			elif button.get_label() == "Pause!" :
+				button.set_label("Play!")
+		
 		if self.playing:
 			self.pause()
 		else:
@@ -42,7 +49,7 @@ class PlayerHandler () :
 		self.move_to_frame(0)
 		
 		
-	def pause(self) :
+	def pause(self, button = None) :
 		if self.playing == 1:
 			gobject.source_remove(self.playing_thread)
 			self.playing = 0

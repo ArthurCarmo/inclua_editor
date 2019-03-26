@@ -36,7 +36,7 @@
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkButton" id="main_play_button">
-                <property name="label" translatable="yes">Play/Pause!</property>
+                <property name="label" translatable="yes">Play!</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
