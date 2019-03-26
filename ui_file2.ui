@@ -2,7 +2,6 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkFileFilter"/>
   <object class="GtkFileFilter" id="images">
     <mime-types>
       <mime-type>jpg</mime-type>
@@ -238,6 +237,7 @@
                     <property name="can_focus">True</property>
                     <property name="valign">start</property>
                     <property name="restrict_to_fill_level">False</property>
+                    <property name="fill_level">0</property>
                     <property name="round_digits">1</property>
                     <property name="draw_value">False</property>
                   </object>

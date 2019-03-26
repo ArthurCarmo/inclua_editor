@@ -2,7 +2,6 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkFileFilter"/>
   <object class="GtkFileFilter" id="images">
     <mime-types>
       <mime-type>jpg</mime-type>
@@ -144,7 +143,7 @@
                   <object class="GtkLabel" id="player_progress_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">start</property>
+                    <property name="halign">end</property>
                     <property name="valign">start</property>
                   </object>
                   <packing>
