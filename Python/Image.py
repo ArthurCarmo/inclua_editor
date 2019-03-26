@@ -8,8 +8,9 @@ from gi.repository import GdkPixbuf
 class Image() :
 	
 	def __init__(self, frameFile, width = None, height = None) :
-		self.frameObject = 1
-		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
+		
+		if frameFile is not None:
+			self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
 		
 		if height is None:
 			if width is not None:
@@ -88,7 +89,18 @@ class Image() :
 		
 class AppendImage(Image) : 
 	
-	def __init__ (self, frameFile, x_position = 0, y_position = 0, target_width = None, target_height = None) :
+	def __init__ (self, frameFile = None, x_position = 0, y_position = 0, target_width = None, target_height = None) :
 	
 		Image.__init__(self, frameFile, target_width, target_height)
 
+	def open (self, frameFile, width = None, height = None) :
+		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
+		
+		if height is None:
+			if width is not None:
+				self.scale_by_width(width)
+		else:
+			self.scale_fit_limits(width, height)
+		
+	def init_from_file_chooser_box(self, file_chooser_box) :
+		self.open(file_chooser_box.get_uri()[7:])

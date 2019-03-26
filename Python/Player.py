@@ -86,6 +86,23 @@ class PlayerHandler () :
 		
 	def refresh(self) :
 		self.progress_label_text = "%d/%d" % (self.curr_frame+1, self.last_frame+1)
+		
+	def copy_state(self, pHandler) :
+		
+		self.stop()
+		
+		self.framesDir			= pHandler.framesDir
+
+		self.curr_frame 		= pHandler.curr_frame
+		self.last_frame 		= pHandler.last_frame
+
+		self.playing			= 0
+		self.playing_thread		= 0
+		
+		self.progress_label_width	= pHandler.progress_label_width
+		self.progress_label_text	= pHandler.progress_label_text
+		
+		self.layered_images		= pHandler.layered_images
 
 
 
@@ -95,10 +112,12 @@ from gi.repository import Gtk
 
 class FramePlayer(PlayerHandler): 
 
-	def __init__ (self, canvasFixed, frameWidget, progress_bar, progress_label, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
+	def __init__ (self, window, canvasFixed, frameWidget, progress_bar, progress_label, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
 	
 		PlayerHandler.__init__(self, framesDir, width, height, width_margin_ratio, height_margin_ratio )
 		
+		
+		self.window		= window
 		self.canvasFixed	= canvasFixed		
 		self.frameWidget	= frameWidget
 		self.progress_bar 	= progress_bar
@@ -107,17 +126,19 @@ class FramePlayer(PlayerHandler):
 		self.canvasFixed.connect("size_allocate", self.resize_and_center)
 		self.progress_bar.connect("value_changed", self.get_new_frame)
 		
-		allocation = canvasFixed.get_allocation()
-		self.width  = allocation.width
-		self.height = allocation.height
-		
-		self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
-		
 		self.progress_label.set_width_chars(self.progress_label_width)
 		self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
 		self.progress_bar.set_range (0, self.last_frame)
 		
-		self.center_frame()
+		self.width	= width
+		self.height	= height
+		
+		if self.window.is_visible():
+			allocation = canvasFixed.get_allocation()
+			self.width  = allocation.width
+			self.height = allocation.height
+			self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
+			self.center_frame()
 	
 	
 	def get_new_frame(self, widget) :
@@ -125,30 +146,45 @@ class FramePlayer(PlayerHandler):
 		
 	
 	def center_frame(self) :
-	
-		c = self.canvasFixed.get_allocation()
-		f_width = self.frameWidget.get_pixbuf().get_width()
-		f_height = self.frameWidget.get_pixbuf().get_height()
 		
-		self.canvasFixed.move(self.frameWidget.get_parent(), (c.width - f_width) / 2, (c.height - f_height) / 2)
+		if self.window.is_visible() :
+		
+			c = self.canvasFixed.get_allocation()
+			f_width = self.frameWidget.get_pixbuf().get_width()
+			f_height = self.frameWidget.get_pixbuf().get_height()
+		
+			self.canvasFixed.move(self.frameWidget.get_parent(), (c.width - f_width) / 2, (c.height - f_height) / 2)
 		
 		
 	def resize_and_center(self, widget, allocation) :
 	
-		self.width  = allocation.width
-		self.height = allocation.height
+		if self.window.is_visible() :
 		
-		self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
-		
-		self.center_frame()
+			self.width  = allocation.width
+			self.height = allocation.height
+			
+			self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
+			
+			self.center_frame()
 		
 		
 	def refresh(self) :
+		
+		if self.window.is_visible() :
+			self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
+			self.progress_bar.set_value(self.curr_frame)
+			self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
+		
 	
-		self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
-		self.progress_bar.set_value(self.curr_frame)
-		self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.width * self.width_margin_ratio, self.height * self.height_margin_ratio).pixbuf)
+	def show(self, width = 350, height = 500) :
+		self.window.set_default_size(width, height)
+		self.window.set_visible(True)
+		self.refresh()
+		return True
 		
 		
+	def hide(self, widget, event = None) :
+		self.window.set_visible(False)
+		return True
 		
 
