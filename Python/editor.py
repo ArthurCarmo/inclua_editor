@@ -32,6 +32,7 @@ def append_image (widget, event, player, new_image) :
 		return True
 	
 def set_merger_window(widget, merger, player) :
+	player.pause()
 	merger.copy_state(player)
 	merger.show()
 
