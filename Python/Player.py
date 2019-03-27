@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# Model do player gerencia a passagem de frames, play/pause, 
+# lista de imagens a adicionar e armazena o diretório que contém
+# os frames e as dimensões do espaço onde serão desenhados os frames
+
 import file_counter as fc
 import Image as Img
 import ImageList as ImgList
@@ -105,6 +109,8 @@ class Model () :
 		return (self.height - self.win_height) / 2
 
 
+
+# Control do player gerencia os widgets associados a ele
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk

@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+
+# Classe Model é um gerenciador de lista específico para a classe Image.Control
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -33,3 +37,4 @@ class Model() :
 		for i in range(len(self.images)):
 			self.rm(i)
 		self.sorting = "ini_crescent"
+	

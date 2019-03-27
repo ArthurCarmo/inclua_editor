@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+# Model da imagem gerencia o redimensionamento
+# de forma a manter a proporção correta da imagem
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -101,6 +104,9 @@ class Model() :
 	def init_from_file_chooser_box(self, file_chooser_box) :
 		self.open(file_chooser_box.get_uri()[7:])
 		
+
+# Control da imagem gerencia as posições e dimensões 
+# relativas da imagem em função do frame onde elas serão desenhadas
 
 class Control(Model) : 
 	
