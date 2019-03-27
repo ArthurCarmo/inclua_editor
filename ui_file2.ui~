@@ -97,7 +97,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
-                    <property name="valign">start</property>
+                    <property name="valign">center</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -297,10 +297,10 @@
                   <object class="GtkScale" id="player_progress_bar">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="double_buffered">False</property>
                     <property name="valign">start</property>
                     <property name="restrict_to_fill_level">False</property>
                     <property name="fill_level">0</property>
-                    <property name="round_digits">1</property>
                     <property name="draw_value">False</property>
                   </object>
                   <packing>

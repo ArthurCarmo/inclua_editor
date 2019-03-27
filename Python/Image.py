@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
 
-class Image() :
+class Model() :
 	
 	def __init__(self, frameFile, width = None, height = None) :
 		
@@ -102,11 +102,11 @@ class Image() :
 		self.open(file_chooser_box.get_uri()[7:])
 		
 
-class AppendImage(Image) : 
+class Control(Model) : 
 	
 	def __init__ (self, frameFile = None, normal_x = 0, normal_y = 0, ini_frame = 0, end_frame = 0, relative_width = None, relative_height = None, widget = None) :
 	
-		Image.__init__(self, frameFile)
+		Model.__init__(self, frameFile)
 		
 		self.normal_x		= normal_x
 		self.normal_y		= normal_y
@@ -136,4 +136,18 @@ class AppendImage(Image) :
 			
 	def reload(self) :
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.frameFile)
+		
+	def state_copy(self, ImgM) :
+	
+		self.frameFile		= ImgM.frameFile
+		self.pixbuf		= GdkPixbuf.Pixbuf.new_from_file(self.frameFile)
+		self.normal_x		= ImgM.normal_x
+		self.normal_y		= ImgM.normal_y
+		self.ini_frame 		= ImgM.ini_frame
+		self.end_frame  	= ImgM.end_frame
+		self.relative_width	= ImgM.relative_width
+		self.relative_height	= ImgM.relative_height
+		if self.widget is not None :
+			self.widget.destroy()
+			self.widget = None
 		

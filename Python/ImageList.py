@@ -4,9 +4,9 @@ from gi.repository import Gtk
 from gi.repository import GdkPixbuf
 import Image as Img
 
-class ListHandler() :
+class Model() :
 	
-	def __init__ (self, widget = None) :
+	def __init__ (self) :
 		self.images = []
 		self.sorting = "ini_crescent" 
 	
@@ -24,5 +24,12 @@ class ListHandler() :
 			
 			
 	def rm(self, index) :
+		if self.images[index].widget is not None :
+			self.images[index].widget.destroy()
 		self.images.pop(index)
 			
+	
+	def clear(self) :
+		for i in range(len(self.images)):
+			self.rm(i)
+		self.sorting = "ini_crescent"

@@ -6,7 +6,7 @@ import ImageList as ImgList
 
 from gi.repository import GObject as gobject
 
-class PlayerHandler () :
+class Model () :
 
 	def __init__(self, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
 	
@@ -30,7 +30,7 @@ class PlayerHandler () :
 		self.progress_label_width	= 2 * fc.ndigits(self.last_frame) + 2
 		self.progress_label_text	= "%d/%d" % (self.curr_frame+1, self.last_frame+1)
 		
-		self.appended_images 		= ImgList.ListHandler()
+		self.appended_images 		= ImgList.Model()
 		
 				
 	def toggle(self, button = None) : 
@@ -90,28 +90,11 @@ class PlayerHandler () :
 		
 	def refresh(self) :
 		self.progress_label_text = "%d/%d" % (self.curr_frame+1, self.last_frame+1)
-		
-		
-	def copy_state(self, pHandler) :
-		
-		self.stop()
-		
-		self.framesDir			= pHandler.framesDir
 
-		self.curr_frame 		= pHandler.curr_frame
-		self.last_frame 		= pHandler.last_frame
-
-		self.playing			= 0
-		self.playing_thread		= 0
-		
-		self.progress_label_width	= pHandler.progress_label_width
-		self.progress_label_text	= pHandler.progress_label_text
-		
-		self.appended_images		= pHandler.appended_images
 
 
 	def append_image(self, image, x_global_coord, y_global_coord, ini_frame, end_frame, target_width = 0.34, target_height = 0.5, widget = None) : 
-		self.appended_images.add(Img.AppendImage(image, x_global_coord / self.win_width, y_global_coord / self.win_height, max(ini_frame, 0), min(end_frame, self.last_frame), max(min(1, target_width), 0.1), max(min(1, target_height), 0.1), widget))
+		self.appended_images.add(Img.Control(image, x_global_coord / self.win_width, y_global_coord / self.win_height, max(ini_frame, 0), min(end_frame, self.last_frame), max(min(1, target_width), 0.1), max(min(1, target_height), 0.1), widget))
 
 
 	def width_margin (self) :
@@ -126,11 +109,11 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
-class FramePlayer(PlayerHandler): 
+class Control(Model): 
 
 	def __init__ (self, window, canvasFixed, frameWidget, progress_bar, progress_label, framesDir, width = 533, height = 300, width_margin_ratio  = 0.95, height_margin_ratio = 0.95) :
 	
-		PlayerHandler.__init__(self, framesDir, width, height, width_margin_ratio, height_margin_ratio )
+		Model.__init__(self, framesDir, width, height, width_margin_ratio, height_margin_ratio )
 		
 		
 		self.window		= window
@@ -153,7 +136,7 @@ class FramePlayer(PlayerHandler):
 			
 			self.win_width	= self.width * self.width_margin_ratio
 			self.win_height = self.height * self.height_margin_ratio
-			self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
+			self.frameWidget.set_from_pixbuf(Img.Model(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
 			
 			self.win_width = self.frameWidget.get_pixbuf().get_width()
 			self.win_height = self.frameWidget.get_pixbuf().get_height()
@@ -185,7 +168,7 @@ class FramePlayer(PlayerHandler):
 			self.win_width	= self.width * self.width_margin_ratio
 			self.win_height = self.height * self.height_margin_ratio
 			
-			self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
+			self.frameWidget.set_from_pixbuf(Img.Model(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
 			
 			self.win_width = self.frameWidget.get_pixbuf().get_width()
 			self.win_height = self.frameWidget.get_pixbuf().get_height()
@@ -195,13 +178,12 @@ class FramePlayer(PlayerHandler):
 					img.reload()
 					
 			self.center_frame()
-			self.refresh()
 		
 	def refresh(self) :
 		if self.window.is_visible() :
-			self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
 			self.progress_bar.set_value(self.curr_frame)
-			self.frameWidget.set_from_pixbuf(Img.Image(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
+			self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
+			self.frameWidget.set_from_pixbuf(Img.Model(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
 			
 			for img in self.appended_images.images :
 				if img.widget is not None :
@@ -211,7 +193,7 @@ class FramePlayer(PlayerHandler):
 						self.canvasFixed.move(img.widget, self.win_width * img.normal_x + self.width_margin(), self.win_height * img.normal_y + self.height_margin())
 						img.scale_fit_limits(img.relative_width * self.win_width, img.relative_height * self.win_height)
 						img.show()
-		
+
 	
 	def show(self, width = 350, height = 500) :
 		self.window.set_default_size(width, height)
@@ -225,11 +207,46 @@ class FramePlayer(PlayerHandler):
 		return True
 		
 	
+	def copy_appended_images(self, pHandler) :
+		self.appended_images.clear()
+		for img in pHandler.appended_images.images :
+			new_img = Img.Control()
+			new_img.state_copy(img)
+			if img.widget is not None :
+				new_img.bind_widget(self.add_image_widget())
+			self.appended_images.add(new_img)
+		
+		
+	def copy_state(self, pHandler) :
+		
+		self.stop()
+		
+		self.framesDir			= pHandler.framesDir
+
+		self.curr_frame 		= pHandler.curr_frame
+		self.last_frame 		= pHandler.last_frame
+
+		self.playing			= 0
+		self.playing_thread		= 0
+		
+		self.progress_label_width	= pHandler.progress_label_width
+		self.progress_label_text	= pHandler.progress_label_text
+		
+		self.copy_appended_images(pHandler)
+		
+	
 	def capture_state(self, widget, player) :
 		player.pause()
 		self.copy_state(player)
 		self.show()
 	
+		
+	def add_image_widget(self) :
+			new_widget = Gtk.Image()
+			new_widget.set_visible(False)
+			self.canvasFixed.put(new_widget, 0, 0)
+			return new_widget
+			
 		
 	def bind_image_widget(self, imgWidget, index) :
 		self.appended_images[index].bind_widget(imgWidget)
