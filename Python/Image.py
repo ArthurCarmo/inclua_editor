@@ -9,6 +9,8 @@ class Image() :
 	
 	def __init__(self, frameFile, width = None, height = None) :
 		
+		self.frameFile = frameFile
+		self.pixbuf = None
 		if frameFile is not None:
 			self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
 		
@@ -17,12 +19,12 @@ class Image() :
 				self.scale_by_width(width)
 		else:
 			self.scale_fit_limits(width, height)
-			
 		
 	
 	def resize(self, width, height) :
-		self.pixbuf = self.pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-	
+		if self.frameFile is not None :
+			self.pixbuf = self.pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+			self.pixbuf.get_width(), self.pixbuf.get_height()
 	
 	def scale_by_factor(self, factor) :
 		self.resize(width * factor, height * factor)
@@ -45,6 +47,7 @@ class Image() :
 		
 		h = height
 		w = h * ratio
+
 		self.resize(w, h)
 
 			
@@ -67,6 +70,7 @@ class Image() :
 
 		self.resize(w, h)
 
+
 	def update(self, frameFile, width, height) :
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
 		self.resize(width, height)
@@ -80,22 +84,14 @@ class Image() :
 	
 	
 	def get_pixbuf(self) :
-		return self.pixbuf
+		self.pixbuf
 		
 		
 	def get_size(self) :
-		return self.pixbuf.get_width(), self.pixbuf.get_height()
-		
-		
-class AppendImage(Image) : 
+		self.pixbuf.get_width(), self.pixbuf.get_height()
 	
-	def __init__ (self, frameFile = None, x_position = 0, y_position = 0, target_width = None, target_height = None) :
-	
-		Image.__init__(self, frameFile, target_width, target_height)
-
 	def open (self, frameFile, width = None, height = None) :
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(frameFile)
-		
 		if height is None:
 			if width is not None:
 				self.scale_by_width(width)
@@ -104,3 +100,40 @@ class AppendImage(Image) :
 		
 	def init_from_file_chooser_box(self, file_chooser_box) :
 		self.open(file_chooser_box.get_uri()[7:])
+		
+
+class AppendImage(Image) : 
+	
+	def __init__ (self, frameFile = None, normal_x = 0, normal_y = 0, ini_frame = 0, end_frame = 0, relative_width = None, relative_height = None, widget = None) :
+	
+		Image.__init__(self, frameFile)
+		
+		self.normal_x		= normal_x
+		self.normal_y		= normal_y
+		self.ini_frame 		= ini_frame
+		self.end_frame  	= end_frame
+		self.relative_width	= relative_width
+		self.relative_height	= relative_height
+		self.widget 		= widget
+		
+	
+	def shows_in_frame(self, frame_num) :
+		return self.ini_frame <= frame_num and frame_num <= self.end_frame
+		
+	
+	def bind_widget(self, widget) :
+		self.widget = widget
+		
+		
+	def show(self) :
+		if self.widget is not None :
+			self.widget.set_from_pixbuf(self.pixbuf)
+			self.widget.set_visible(True)
+			
+	def hide(self) :
+		if self.widget is not None :
+			self.widget.set_visible(False)
+			
+	def reload(self) :
+		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.frameFile)
+		
