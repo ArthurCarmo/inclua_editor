@@ -174,6 +174,7 @@ void set_4by3_ratio() {
 void center_image() {
 
 	gtk_fixed_move(GTK_FIXED(fixed), GTK_WIDGET(event_box), (canvas_winW - frame_winW) / 2, (canvas_winH - frame_winH) / 2);
+	update_frame(); 
 
 }
 
@@ -188,7 +189,6 @@ static void set_fixed_children_dim(GtkWidget *widget, GdkRectangle *allocate, gp
 	frame_winH = (gdouble) allocate->height * frameH_margin;
 	
 	set_4by3_ratio();
-	update_frame(); 
 	
 }
 
@@ -382,7 +382,6 @@ int main (int argc, char *argv[]) {
 
 	center_image();
 	set_4by3_ratio();
-	update_frame();
 	
 	gtk_main();
 
