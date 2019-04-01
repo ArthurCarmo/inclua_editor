@@ -148,7 +148,6 @@ class Control(Model):
 			self.win_height = self.frameWidget.get_pixbuf().get_height()
 			
 			self.center_frame()
-			self.refresh()
 	
 	
 	def get_new_frame(self, widget) :
@@ -163,7 +162,7 @@ class Control(Model):
 			self.win_height = self.frameWidget.get_pixbuf().get_height()
 		
 			self.canvasFixed.move(self.frameWidget.get_parent(), (c.width - self.win_width) / 2, (c.height - self.win_height) / 2)
-		
+
 		
 	def resize_and_center(self, widget, allocation) :
 		if self.window.is_visible() :
@@ -183,10 +182,10 @@ class Control(Model):
 				if img.widget is not None:
 					img.reload()
 					
-			self.center_frame()
 		
 	def refresh(self) :
 		if self.window.is_visible() :
+			self.center_frame()
 			self.progress_bar.set_value(self.curr_frame)
 			self.progress_label.set_text("%d/%d" % (self.curr_frame+1, self.last_frame+1))
 			self.frameWidget.set_from_pixbuf(Img.Model(self.framesDir + "frame_%d.png" % self.curr_frame, self.win_width, self.win_height).pixbuf)
